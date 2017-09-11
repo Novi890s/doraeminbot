@@ -39,4 +39,4 @@ Confax.registerCommand('roshambo', 'default', (message) => {
   } else {
     message.channel.send('Rock.. Paper.. Scissors.. SHOOT: ' + mojiMoves[Math.floor(Math.random() * 3)])
   }
-}, allMoves, 'Play Rock-Paper-Scissors! !roshambo rock', '[]')
+}, allMoves, 'Play Rock-Paper-Scissors! !roshambo rock', '<your_move>')

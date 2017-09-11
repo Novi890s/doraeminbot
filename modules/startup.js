@@ -1,12 +1,10 @@
-const Discord = require('discord.js')
 const Confax = require('../bot.js')
 const bot = Confax.bot
-const config = Confax.config
 
 bot.on('ready', () => {
   bot.user.setGame('!help to get started.')
   bot.user.setStatus('online')
-  console.log('Confax is ready to rumble!')
+  console.log('GlassBot Seeks Bad Code!')
 })
 
 bot.on('reconnecting', () => {

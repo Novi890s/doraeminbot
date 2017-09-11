@@ -19,7 +19,7 @@ Confax.registerCommand('cmdhelp', 'default', (message, bot) => {
   }
 
   if (realCmd) {
-    helpInfo += 'Info on `' + '`:\n```' +
+    helpInfo += 'Info on **' + realCmd + '**: ```' +
     '\nCommand: ' + realCmd
     helpInfo += '\nCommand Type: ' + cmdType
 

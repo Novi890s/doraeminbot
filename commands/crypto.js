@@ -16,7 +16,7 @@ GlassBot.registerCommand('crypto', 'default', (message, bot) => {
   request(address, function (error, response, body) {
     if (error) {
       //  error is always null, but put this here for jstandard: (Expected error to be handled.)
-      message.channel.send('Not a valied crypto currency, try BTC.')
+      message.channel.send('Not a valied crypto currency, try BTC or ETH.')
       return
     }
     try {
@@ -28,4 +28,4 @@ GlassBot.registerCommand('crypto', 'default', (message, bot) => {
       message.channel.send('<:doggo:328259712963313665>' + ' Not a valid crypto-currency, try BTC or ETH.')
     }
   })
-}, ['crypt', 'price'], 'Get latest crypto currency price.', '[]')
+}, ['crypt', 'price'], 'Get latest crypto currency price.', '<crypto-currency ticker> Example: Bitcoin = BTC')

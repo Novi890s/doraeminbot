@@ -1,4 +1,3 @@
-const Discord = require('discord.js')
 const Confax = require('../bot.js')
 
 const emojis = [
@@ -71,6 +70,6 @@ const emojis = [
 ]
 
 Confax.registerCommand('moji', 'default', (message) => {
-  var index = Math.random(0, emojis.length - 1)
+  let index = Math.floor(Math.random() * (emojis.length))
   return emojis[index]
 }, ['emoji', 'emoticon', 'emote'], 'Get a random emote!', '[]')
