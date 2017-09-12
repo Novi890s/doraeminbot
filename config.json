@@ -1,13 +1,12 @@
 {
   "prefix": "!",
   "suffix": "!",
-  "masters": ["202515321402294275"],
+  "masters": ["206092093653909504"],
   "botID": "335165457005019136",
   "codeElements": [";", "{", "}", ")", "[", "]", ">"],
   "repostThreshold": 4,
   "codeLang": "csharp",
   "selfDestructIn": 5,
   "formatBlock": "```"
-  
 }
 

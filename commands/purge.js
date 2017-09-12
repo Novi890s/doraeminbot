@@ -23,7 +23,7 @@ Confax.registerCommand('purge', 'moderator', (message, bot) => {
       for (let i = 0; i < value.length; i++) {
         if (mentions.includes(value[i].author)) {
           deleteMsgs.push(value[i])
-        }
+        }// Unhandled promise rejection (rejection id: 201): DiscordAPIError: You can only bulk delete messages that are under 14 days old.
         message.channel.bulkDelete(deleteMsgs)
       }
     })
