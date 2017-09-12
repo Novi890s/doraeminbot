@@ -1,4 +1,4 @@
-const Confax = require('../bot.js')
+const GlassBot = require('../bot.js')
 
 const emojis = [
   '( ͡° ͜ʖ ͡°)',
@@ -69,7 +69,7 @@ const emojis = [
   '| (• ◡•)| (❍ᴥ❍ʋ)'
 ]
 
-Confax.registerCommand('moji', 'default', (message) => {
+GlassBot.registerCommand('moji', 'default', (message) => {
   let index = Math.floor(Math.random() * (emojis.length))
   return emojis[index]
 }, ['emoji', 'emoticon', 'emote'], 'Get a random emote!', '[]')

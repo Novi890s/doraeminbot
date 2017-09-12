@@ -1,13 +1,13 @@
-const Confax = require('../bot.js')
+const GlassBot = require('../bot.js')
 
-Confax.registerCommand('purge', 'moderator', (message, bot) => {
+GlassBot.registerCommand('purge', 'moderator', (message, bot) => {
   let deletePerms = message.guild.member(bot.user).hasPermission('MANAGE_MESSAGES')
   let args = message.content.split(' ')
   let amount = parseInt(args[0])
   let mentions = message.mentions.users.array()
 
   if (!deletePerms) {
-    return "Confax doesn't have enough permissions to delete messages."
+    return "GlassBot doesn't have enough permissions to delete messages."
   } else if (isNaN(amount)) {
     return 'Please provide the amount of messages you would like to delete.'
   } else if (amount < 1) {

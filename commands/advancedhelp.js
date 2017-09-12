@@ -1,10 +1,9 @@
-const Discord = require('discord.js')
-const Confax = require('../bot.js')
+const GlassBot = require('../bot.js')
 const config = require('../config.json')
 
-Confax.registerCommand('advancedhelp', 'default', (message, bot) => {
+GlassBot.registerCommand('advancedhelp', 'default', (message, bot) => {
   let helpMsg = ''
-  let commands = Confax.commands
+  let commands = GlassBot.commands
 
   for (let loopCmdType in commands) {
     helpMsg += '**~~------~~** __' + loopCmdType.toUpperCase() + ' COMMANDS__ **~~------~~**'

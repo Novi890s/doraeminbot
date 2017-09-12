@@ -1,7 +1,7 @@
-const Confax = require('../bot.js')
-const bot = Confax.bot
-const config = Confax.config
-const commands = Confax.commands
+const GlassBot = require('../bot.js')
+const bot = GlassBot.bot
+const config = GlassBot.config
+const commands = GlassBot.commands
 
 bot.on('message', (message) => {
   let cmd

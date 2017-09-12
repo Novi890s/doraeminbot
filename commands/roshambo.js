@@ -23,7 +23,7 @@
     // 🖖 for later use :D
 */
 
-const Confax = require('../bot.js')
+const GlassBot = require('../bot.js')
 const allMoves = [
   'rock', '✊', '🤜', '🤜', '👊',
   'paper', '✋', '🖐', '📄', '📃', '🗒',
@@ -31,7 +31,7 @@ const allMoves = [
 ]
 const mojiMoves = [' 👊', ' ✋', ' ✌']
 
-Confax.registerCommand('roshambo', 'default', (message) => {
+GlassBot.registerCommand('roshambo', 'default', (message) => {
   let channel = message.guild.channels.find('name', 'chill')
   if (channel != null && channel === message.channel) {
     let userMove = message.content.toLowerCase()

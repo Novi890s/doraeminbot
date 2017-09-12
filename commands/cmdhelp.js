@@ -1,12 +1,11 @@
-const Discord = require('discord.js')
-const Confax = require('../bot.js')
+const GlassBot = require('../bot.js')
 
-Confax.registerCommand('cmdhelp', 'default', (message, bot) => {
+GlassBot.registerCommand('cmdhelp', 'default', (message, bot) => {
   let helpInfo = ''
   let cmd = message.content.split(' ')[0]
   let realCmd
   let cmdType
-  let commands = Confax.commands
+  let commands = GlassBot.commands
   if (!cmd) return 'Please provide a command to get the information from.'
   for (let loopCmdType in commands) {
     for (let loopCmd in commands[loopCmdType]) {

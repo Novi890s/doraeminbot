@@ -1,5 +1,5 @@
-const Confax = require('../bot.js')
-const bot = Confax.bot
+const GlassBot = require('../bot.js')
+const bot = GlassBot.bot
 
 bot.on('ready', () => {
   bot.user.setGame('!help to get started.')
@@ -10,7 +10,7 @@ bot.on('ready', () => {
 bot.on('reconnecting', () => {
   bot.user.setGame('!help to get started.')
   bot.user.setStatus('online')
-  console.log('Confax has reconnected to Discord.')
+  console.log('GlassBot has reconnected to Discord.')
 })
 
 bot.login(process.env.BOT_TOKEN)

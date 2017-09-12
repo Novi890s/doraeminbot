@@ -1,7 +1,7 @@
-const Confax = require('../bot.js')
+const GlassBot = require('../bot.js')
 const request = require('request')
 
-Confax.registerCommand('dog', 'default', (message) => {
+GlassBot.registerCommand('dog', 'default', (message) => {
   request('http://random.dog/woof', function (error, response, body) {
     if (error) {
       //  error is always null, but put this here for jstandard: (Expected error to be handled.)

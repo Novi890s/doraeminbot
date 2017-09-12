@@ -1,6 +1,6 @@
-const Confax = require('../bot.js')
+const GlassBot = require('../bot.js')
 
-Confax.registerCommand('uptime', 'default', (message, bot) => {
+GlassBot.registerCommand('uptime', 'default', (message, bot) => {
   let ms = bot.uptime
   let cd = 24 * 60 * 60 * 1000 // Calc days
   let ch = 60 * 60 * 1000 // Calc hours
@@ -66,4 +66,4 @@ Confax.registerCommand('uptime', 'default', (message, bot) => {
 
   dateString += dateStrings[dateStrings.length - 1]
   return '**Uptime:** ' + dateString
-}, [], 'View the current uptime of Confax', '[]')
+}, [], 'View the current uptime of GlassBot', '[]')

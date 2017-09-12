@@ -1,5 +1,5 @@
-const Confax = require('../bot.js')
+const GlassBot = require('../bot.js')
 
-Confax.registerCommand('invite', 'default', (message) => {
-  return 'Invite Link: https://discordapp.com/oauth2/authorize?client_id=319545839951544320&scope=bot'
-}, ['invitelink'], 'Get invite link to invite Confax to your server', '[]')
+GlassBot.registerCommand('invite', 'default', (message) => {
+  return 'Invite Link: https://discordapp.com/oauth2/authorize?client_id=335165457005019136&scope=bot'
+}, ['invitelink'], 'Get invite link to invite GlassBot to your server', '[]')

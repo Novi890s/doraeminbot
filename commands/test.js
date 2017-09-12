@@ -1,5 +1,5 @@
-const Confax = require('../bot.js')
+const GlassBot = require('../bot.js')
 
-Confax.registerCommand('test', 'dm', (message) => {
+GlassBot.registerCommand('test', 'dm', (message) => {
   return '**Test successful!**'
 }, [], 'Test Command', '[]')
