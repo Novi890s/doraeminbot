@@ -107,7 +107,6 @@ bot.on('message', message => {
  * Loop through each line in message and check for
  * code-like characters. If code formatting is found
  * return, else keep checking.
- * @param  {string[]} lines
  * @param  {string[]} message
  */
 function ParseMessage (message) {
@@ -127,7 +126,7 @@ function ParseMessage (message) {
 /**
  * Check if this is unformatted code, if so Create New Message
  * @param  {string[]} lines
- * @param  {string[]} message
+ * @param  {string} message
  */
 function CheckMessage (lines, message) {
   if (IsBadCode() && !isFormatted) {
@@ -196,7 +195,7 @@ function PostNewMessage (message, newMessage) {
 
 /**
  * Deletes the old unformatted message if bot has permission
- * @param  {string[]} message
+ * @param  {string} message
  */
 function DeleteOldMessage (message) {
   let managePerms = message.guild.member(bot.user).hasPermission('MANAGE_MESSAGES')
