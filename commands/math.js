@@ -10,9 +10,9 @@ GlassBot.registerCommand('math', 'default', (message, bot) => {
     return 'Error while evaluating the math expression.'
   } finally {
     if (isNaN(parseFloat(result))) {
-      message.channel.send('Invalid Calculation Expression')
+      return 'Invalid Calculation Expression'
     } else {
-      message.channel.send('**Result:** ' + result)
+      return '**Result:** ' + result
     }
   }
 }, ['calculate', 'calc', 'calculator'], 'Calculate a math expression', '<expression>')
