@@ -11,9 +11,10 @@ bot.on('message', (message) => {
   } else if (message.author.bot) {
   //  This is the bot speaking
   } else {
+    message.content = message.content.toLowerCase()
     for (let loopCmdType in commands) {
       for (let loopCmd in commands[loopCmdType]) {
-        if (message.content.toLowerCase().lastIndexOf(config.prefix + loopCmd, 0) === 0 || message.content.toLowerCase().lastIndexOf(loopCmd + config.suffix, 0) === 0) {
+        if (message.content.lastIndexOf(config.prefix + loopCmd, 0) === 0 || message.content.lastIndexOf(loopCmd + config.suffix, 0) === 0) {
           message.content = message.content.replace(config.prefix + loopCmd, '')
           message.content = message.content.replace(loopCmd + config.suffix, '')
           cmd = loopCmd
@@ -23,7 +24,7 @@ bot.on('message', (message) => {
           let aliases = commands[loopCmdType][loopCmd].aliases
           for (let i = 0; i < aliases.length; i++) {
             let alias = aliases[i]
-            if (message.content.toLowerCase().lastIndexOf(config.prefix + alias, 0) === 0 || message.content.toLowerCase().lastIndexOf(alias + config.suffix, 0) === 0) {
+            if (message.content.lastIndexOf(config.prefix + alias, 0) === 0 || message.content.lastIndexOf(alias + config.suffix, 0) === 0) {
               message.content = message.content.replace(config.prefix + alias, '')
               message.content = message.content.replace(alias + config.suffix, '')
               cmd = loopCmd
