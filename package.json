@@ -7,11 +7,13 @@
     "url": "https://github.com/GlassToeStudio/Confax/issues"
   },
   "dependencies": {
+    "d3-node": "^1.1.1",
     "discord.js": "^11.1.0",
     "dotenv": "^4.0.0",
     "js-yaml": "^3.9.0",
     "mathjs": "^3.16.3",
     "node-opus": "^0.2.6",
+    "plotly": "^1.0.6",
     "request": "^2.81.0"
   },
   "engines": {
@@ -28,4 +30,3 @@
     "start": "node bot.js"
   }
 }
-
