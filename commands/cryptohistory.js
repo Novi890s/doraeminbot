@@ -16,7 +16,9 @@
 
 const GlassBot = require('../bot.js')
 const request = require('request')
-const plotly = require('plotly')('GlassToeStudio', 'nGL4zndcjmaKYjRK8TzC')
+const username = process.env.PLOTLY_USER_NAME
+const plotlyapikey = process.env.PLOTLY_API_KEY
+const plotly = require('plotly')(username, plotlyapikey)
 
 GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
   let xAxis = []
