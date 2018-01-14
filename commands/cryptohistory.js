@@ -16,17 +16,54 @@
 
 const GlassBot = require('../bot.js')
 const request = require('request')
-const plotly = require('plotly')('GlassToeStudio', 'nGL4zndcjmaKYjRK8TzC')
+const Discord = require('discord.js')
+const username = process.env.PLOTLY_USER_NAME
+const plotlyapikey = process.env.PLOTLY_API_KEY
+const plotly = require('plotly')(username, plotlyapikey)
 
 GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
+  let histories = [365, 180, 90, 30, 7, 1]
   let xAxis = []
   let yAxis = []
   let historyData
-  let coin = message.content.toUpperCase()
-  let address = 'http://www.coincap.io/history/1day/' + coin
+  let msg = (message.content.toUpperCase()).split(' ')
+  let coin = msg[0]
+  let hist = msg[1]
 
+  console.log('_____________')
+  console.log('Coin : ' + coin)
+  console.log('History : ' + hist)
+
+  // No history argument was provided
+  if (hist === undefined) hist = 1
+
+  hist = parseInt(hist)
+  // Check that history is an integer if not, create a temp var to see if history arg was privded first.
+  if (isNaN(hist)) {
+    let tempCoin = parseInt(coin)
+    if (isNaN(tempCoin)) {
+      console.log('TempCoin is not an int : ' + tempCoin)
+      hist = '1'
+    } else {
+      coin = msg[1]
+      hist = tempCoin
+    }
+  }
+
+  for (let i = 0; i < histories.length; i++) {
+    if (hist >= histories[i]) {
+      hist = histories[i]
+      break
+    }
+  }
+
+  console.log('_____________')
+  console.log('Coin : ' + coin)
+  console.log('History : ' + hist)
+  let address = 'http://www.coincap.io/history/' + hist + 'day/' + coin
+  let graphLocation = ''
   request(address, function (error, response, body) {
-    if (error) { message.channel.send('Not a valied crypto currency, try BTC or ETH.') }
+    if (error) { return ('Something went wrong ¯\\_(ツ)_/¯ ') }
     try {
       historyData = JSON.parse(body)
       let price = historyData.price
@@ -34,7 +71,7 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
         xAxis.push(UnixToDate(historyData.price[i][0]))
         yAxis.push(historyData.price[i][1])
       }
-    } catch (error) { message.channel.send('<:doggo:328259712963313665>' + ' Not a valid crypto-currency, try BTC or ETH.') }
+    } catch (error) { return ('<:doggo:328259712963313665>' + ' Not a valid crypto-currency, try BTC, ETH, or LTC.') }
 
     // Create the json object for our data and chart-type
     let trace1 = {
@@ -51,7 +88,7 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
 
     // Create the chart layout and axis names
     var lay = {
-      title: coin + ' 1 Day History',
+      title: coin + ' ' + hist + ' Day History',
       xaxis: {
         title: 'Time'
       },
@@ -63,40 +100,72 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
 
     // Set our data and graph options
     var data = [trace1]
-    var graphOptions = {layout: lay, fileopt: 'overwrite', filename: 'Crytpo_' + coin}
+    var graphOptions = {layout: lay, fileopt: 'overwrite', filename: 'Crytpo_' + coin + ' ' + hist + ' History'}
 
-    // Create the chart and plot our data
+    // Create the chart and plot our data (delete the last plot created, with its data)
     plotly.plot(data, graphOptions, function (err, msg) {
       if (err) { return }
       let deleteID = parseInt(msg.url.slice(-2))
       let deletPlotID = (deleteID - 2).toString()
       let delegeGridId = (deleteID - 1).toString()
-      message.channel.send('Here is the last 24 hour trend for ' + coin, {
-        file: msg.url + '.png'})
-        .then(plotly.deletePlot(delegeGridId, function (err, plot) {
-          if (err) { // console.log(err)
-          } else { console.log('deleted an old graph') }
-        }))
-      .then(plotly.deletePlot(deletPlotID, function (err, plot) {
+      graphLocation = msg.url + '.png'
+
+      console.log(graphLocation)
+
+      plotly.deletePlot(delegeGridId, function (err, plot) {
         if (err) { // console.log(err)
         } else { console.log('deleted an old graph') }
-      }))
+      })
+
+      plotly.deletePlot(deletPlotID, function (err, plot) {
+        if (err) { // console.log(err)
+        } else { console.log('deleted an old graph') }
+      })
+
+      message.channel.send('Here is the last ' + hist + ' day trend for ' + coin, { embed: {
+        'title': coin + ' ' + hist + ' history',
+        'description': 'Created using [CryptoCompare API](https://discordapp.com)',
+        'url': graphLocation,
+        'color': 9636912,
+        'image': {
+          'url': graphLocation
+        },
+        'file': graphLocation,
+        'thumbnail': {
+          'url': 'https://www.cryptocompare.com/media/20567/cc-logo-vert.png'
+        }
+      }})
     })
   })
 }, ['hist', 'history'], 'Show latest trend for the past day.', '<crypto-currency ticker> Example: Bitcoin = BTC')
 
 /**
  * Takes a UNIX time stamp (in milliseconds) and converts to
- * hour, minute, second.
+ * yyyy mm dd hh mm AM/PM
  * @param  {number} unixTimeStamp
  */
-function UnixToDate (unixTimeStamp) {
-  let days = {1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thur', 5: 'Fri', 6: 'Sat', 7: 'Sun'}
-  let date = new Date(unixTimeStamp)
-  let day = date.getDay()
-  let hours = date.getHours()
-  let minutes = '0' + date.getMinutes()
-  let seconds = '0' + date.getSeconds()
-  let formattedTime = days[day] + ':' + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2)
-  return formattedTime
+function UnixToDate (timestamp) {
+  let d = new Date(timestamp) // Convert the passed timestamp to milliseconds
+  let yyyy = d.getFullYear()
+  let mm = ('0' + (d.getMonth() + 1)).slice(-2)  // Months are zero based. Add leading 0.
+  let dd = ('0' + d.getDate()).slice(-2) // Add leading 0.
+  let hh = d.getHours()
+  let h = hh
+  let min = ('0' + d.getMinutes()).slice(-2) // Add leading 0.
+  let ampm = 'AM'
+  let time
+
+  if (hh > 12) {
+    h = hh - 12
+    ampm = 'PM'
+  } else if (hh === 12) {
+    h = 12
+    ampm = 'PM'
+  } else if (hh === 0) {
+    h = 12
+  }
+
+  // ie: 2013-02-18, 8:35 AM
+  time = yyyy + '-' + mm + '-' + dd + ', ' + h + ':' + min + ' ' + ampm
+  return time
 }
