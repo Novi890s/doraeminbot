@@ -22,11 +22,12 @@ GlassBot.registerCommand('help', 'default', (message, bot) => {
   let defaultcmds = Object.keys(cmds['default']).length
   let dmcmds = Object.keys(cmds['dm']).length
 
-  return '\n' +
-         'Default Commands **('   + defaultcmds   + ')** ```' + cmds['default'].join(' \n')   + ' ```\n' +
-         'DM Commands **('        + dmcmds        + ')** ```' + cmds['dm'].join('-\n')        + ' ```\n' +
-         'Moderator Commands **(' + modcmds       + ')** ```' + cmds['moderator'].join(' \n') + ' ```\n' +
-         'Master Commands **('    + mastercmds    + ')** ```' + cmds['master'].join(' \n')    + ' ```\n' +
-         'All Commands - **('     + (defaultcmds  + dmcmds    + modcmds + mastercmds) + ')**' +
-         '```Use advancedhelp to get an advanced list of all commands or cmdhelp to get a detailed description of one. ```'
+  let helpList = '\n'
+  if (defaultcmds > 0)  helpList += 'Default Commands **('   + defaultcmds   + ')** ```' + cmds['default'].join(' \n')   + ' ```\n'
+  if (dmcmds > 0)       helpList += 'DM Commands **('        + dmcmds        + ')** ```' + cmds['dm'].join('-\n')        + ' ```\n'
+  if (modcmds > 0)      helpList += 'Moderator Commands **(' + modcmds       + ')** ```' + cmds['moderator'].join(' \n') + ' ```\n'
+  if (mastercmds > 0)   helpList += 'Master Commands **('    + mastercmds    + ')** ```' + cmds['master'].join(' \n')    + ' ```\n'
+                        helpList += 'All Commands - **('     + (defaultcmds  + dmcmds    + modcmds + mastercmds) + ')**' +
+                                    '```Use advancedhelp to get an advanced list of all commands or cmdhelp to get a detailed description of one. ```'
+  return helpList
 }, ['cmds', 'commands', 'commandlist'], 'List all commands', '[]')

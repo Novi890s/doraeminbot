@@ -54,7 +54,7 @@ GlassBot.registerCommand('sendcurrency', 'default', (message) => {
 
   //  Perform exchange
     //  Transfer the given amount from sender to receiver
-      //  Verify transaction succeded
+      //  Verify transaction succeeded
 
   // try {
   //   db.products.insertOne( { item: "card", qty: 15 } )
@@ -72,6 +72,6 @@ GlassBot.registerCommand('sendcurrency', 'default', (message) => {
     return found
   }
 
-  //  Upate database with amount sent from who to whom?
+  //  Update database with amount sent from who to whom?
 }, ['send', 'tip'], 'Send BTC to a User', '[]')
 // iJW40zvNeqIAXWTA

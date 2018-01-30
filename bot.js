@@ -16,7 +16,7 @@ exports.commands = {
   dm: {}
 }
 
-registerCommand = function (name, type, callback, aliases, description, usage) {
+let registerCommand = function (name, type, callback, aliases, description, usage) {
   exports.commands[type][name] = {}
   exports.commands[type][name]['aliases'] = aliases
   exports.commands[type][name]['description'] = description
@@ -34,7 +34,7 @@ var loadScript = (path, reload) => {
 }
 
 function changeConfig (guildID, callback) {
-  var path = './confaxfiles/' + guildID + '.yml'
+  var path = './glassbotfiles/' + guildID + '.yml'
   var data = yaml.safeLoad(fs.readFileSync(path))
   callback()
   fs.writeFileSync(path, yaml.safeDump(data))
@@ -42,7 +42,7 @@ function changeConfig (guildID, callback) {
 }
 
 function getConfigValue (guildID, name) {
-  var path = './confaxfiles/' + guildID + '.yml'
+  var path = './glassbotfiles/' + guildID + '.yml'
   var data = yaml.safeLoad(fs.readFileSync(path))
   try { return data[name] } catch (error) { console.log('An error occured: ' + error.stack) }
 }

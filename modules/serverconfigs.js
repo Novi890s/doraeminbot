@@ -1,4 +1,5 @@
 const GlassBot = require('../bot.js')
+const fs = require('fs')
 
 GlassBot.bot.on('guildCreate', (guild) => {
   var guildID = guild.id
@@ -10,6 +11,6 @@ GlassBot.bot.on('guildCreate', (guild) => {
 GlassBot.bot.on('guildDelete', (guild) => {
   var guildID = guild.id
   var path = './glassBotfiles/' + guildID + '.yml'
-  try { fs.unlinkSync(path) } catch (error) { console.log('An error occured: ' + error.stack) }
+  try { fs.unlinkSync(path) } catch (error) { console.log('An error occurred: ' + error.stack) }
   console.log('Deleted guild config file for ' + guild + '(' + path + ')')
 })
