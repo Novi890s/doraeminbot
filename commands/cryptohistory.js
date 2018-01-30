@@ -16,7 +16,6 @@
 
 const GlassBot = require('../bot.js')
 const request = require('request')
-const Discord = require('discord.js')
 const username = process.env.PLOTLY_USER_NAME
 const plotlyapikey = process.env.PLOTLY_API_KEY
 const plotly = require('plotly')(username, plotlyapikey)
@@ -30,9 +29,9 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
   let coin = msg[0]
   let hist = msg[1]
 
-  console.log('_____________')
-  console.log('Coin : ' + coin)
-  console.log('History : ' + hist)
+  // console.log('_____________')
+  // console.log('Coin : ' + coin)
+  // console.log('History : ' + hist)
 
   // No history argument was provided
   if (hist === undefined) hist = 1
@@ -57,9 +56,9 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
     }
   }
 
-  console.log('_____________')
-  console.log('Coin : ' + coin)
-  console.log('History : ' + hist)
+  // console.log('_____________')
+  // console.log('Coin : ' + coin)
+  // console.log('History : ' + hist)
   let address = 'http://www.coincap.io/history/' + hist + 'day/' + coin
   let graphLocation = ''
   request(address, function (error, response, body) {
@@ -76,26 +75,122 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
     // Create the json object for our data and chart-type
     let trace1 = {
       type: 'scatter',
+      marker: {
+        line: {
+          width: 0.01
+        }
+      },
       x: xAxis,
       y: yAxis,
-      mode: 'lines',
-      name: coin,
-      line: {
-        color: 'rgb(219, 64, 82)',
-        width: 3
-      }
+      name: coin
     }
 
     // Create the chart layout and axis names
     var lay = {
-      title: coin + ' ' + hist + ' Day History',
-      xaxis: {
-        title: 'Time'
+      title: '<b>' + coin + ' ' + hist + ' Day History</b>',
+      titlefont: {
+        family: 'Droid Serif',
+        size: 18,
+        color: 'rgb(0, 217, 255)'
       },
+      height: 1080,
+      width: 1920,
+      autosize: true,
+      bargap: 0,
+      boxmode: 'group',
+      paper_bgcolor: 'rgba(0, 0, 0, 0)',
+      margin: {
+        l: 70,
+        r: 70,
+        t: 40,
+        b: 20,
+        pad: 0,
+        autoexpand: true
+      },
+      plot_bgcolor: 'rgba(58, 58, 58, 0)',
+      scene: {
+        aspectratio: {
+          y: 1,
+          x: 1,
+          z: 1
+        },
+        aspectmode: 'auto'
+      },
+      // ////////////////////////////////////////////////////////////
       yaxis: {
-        title: 'Price $USD',
-        tickprefix: '$'
-      }
+        domain: [
+          0.09,
+          1
+        ],
+        type: 'linear',
+        showticklabels: true,
+        gridcolor: 'rgb(142, 142, 142)',
+        linecolor: 'rgb(23, 190, 207)',
+        mirror: true,
+        nticks: 15,
+        linewidth: 2,
+        autorange: true,
+        tickprefix: '$',
+        tickmode: 'auto',
+        ticks: 'inside',
+        tickwidth: 6,
+        ticklen: 14,
+        zeroline: true,
+        zerolinewidth: 5,
+        zerolinecolor: 'rgb(23, 190, 207)',
+        showgrid: true,
+        rangeslider: {
+          visible: false,
+          autorange: true
+        },
+        showline: true,
+        tickfont: {
+          color: 'rgb(0, 217, 255)',
+          family: 'Droid Serif',
+          size: 18
+        },
+        exponentformat: 'B'
+      },
+      // ///////////////////////////////////////////////////////
+      xaxis: {
+        domain: [
+          0.00,
+          1.01
+        ],
+        type: 'category',
+        showticklabels: true,
+        gridcolor: 'rgb(142, 142, 142)',
+        linecolor: 'rgb(23, 190, 207)',
+        mirror: true,
+        nticks: 15,
+        linewidth: 2,
+        autorange: true,
+        tickprefix: '',
+        tickmode: 'auto',
+        ticks: 'inside',
+        ticklen: 14,
+        zeroline: true,
+        zerolinewidth: 5,
+        zerolinecolor: 'rgb(23, 190, 207)',
+        showgrid: true,
+        rangeslider: {
+          visible: false,
+          autorange: true
+        },
+        showline: true,
+        tickfont: {
+          color: 'rgb(0, 217, 255)',
+          family: 'Droid Serif',
+          size: 9
+        },
+        tickwidth: 6,
+        tickangle: 45,
+        side: 'bottom',
+        position: 0,
+        anchor: 'y',
+        exponentformat: 'none'
+      },
+      hovermode: 'closest'
     }
 
     // Set our data and graph options
@@ -104,10 +199,15 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
 
     // Create the chart and plot our data (delete the last plot created, with its data)
     plotly.plot(data, graphOptions, function (err, msg) {
-      if (err) { return }
-      let deleteID = parseInt(msg.url.slice(-2))
+      if (err) {
+        console.log(err)
+        return
+      }
+      let deleteID = parseInt(msg.url.slice(-3))
       let deletPlotID = (deleteID - 2).toString()
       let delegeGridId = (deleteID - 1).toString()
+      console.log(deletPlotID)
+      console.log(delegeGridId)
       graphLocation = msg.url + '.png'
 
       console.log(graphLocation)
@@ -122,18 +222,18 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
         } else { console.log('deleted an old graph') }
       })
 
-      message.channel.send('Here is the last ' + hist + ' day trend for ' + coin, { embed: {
-        'title': coin + ' ' + hist + ' history',
-        'description': 'Created using [CryptoCompare API](https://discordapp.com)',
-        'url': graphLocation,
+      message.channel.send({ embed: {
+        'title': coin + ' ' + hist + ' Day History',
+        // 'description': '[Graph Link](' + graphLocation + ')',
+        // 'url': 'https://www.cryptocompare.com/api/',
         'color': 9636912,
-        'image': {
-          'url': graphLocation
-        },
-        'file': graphLocation,
-        'thumbnail': {
-          'url': 'https://www.cryptocompare.com/media/20567/cc-logo-vert.png'
-        }
+        // 'image': {
+        //   'url': graphLocation
+        // },
+        'file': graphLocation
+        // 'thumbnail': {
+        //   'url': 'https://www.cryptocompare.com/media/20567/cc-logo-vert.png'
+        // }
       }})
     })
   })
@@ -146,7 +246,7 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
  */
 function UnixToDate (timestamp) {
   let d = new Date(timestamp) // Convert the passed timestamp to milliseconds
-  let yyyy = d.getFullYear()
+  // let yyyy = d.getFullYear()
   let mm = ('0' + (d.getMonth() + 1)).slice(-2)  // Months are zero based. Add leading 0.
   let dd = ('0' + d.getDate()).slice(-2) // Add leading 0.
   let hh = d.getHours()
@@ -166,6 +266,6 @@ function UnixToDate (timestamp) {
   }
 
   // ie: 2013-02-18, 8:35 AM
-  time = yyyy + '-' + mm + '-' + dd + ', ' + h + ':' + min + ' ' + ampm
+  time = mm + '-' + dd + ', ' + h + ':' + min + ' ' + ampm
   return time
 }
