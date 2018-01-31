@@ -3,12 +3,14 @@ const bot = new Discord.Client()
 const fs = require('fs')
 const yaml = require('js-yaml')
 const config = require('./config')
+const chartConfig = require('./chartconfig')
 const http = require('http')
 const dotenv = require('dotenv')
 dotenv.load()
 
 exports.bot = bot
 exports.config = config
+exports.chartConfig = chartConfig
 exports.commands = {
   master: {},
   moderator: {},

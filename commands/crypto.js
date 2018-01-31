@@ -8,7 +8,7 @@
     ------------------------------------------------------------------------
     Return current price of a given crypto-currency in $US
 
-    The following command is uisng a free API from https://www.cryptocompare.com/ (CC BY-NC 3.0)
+    The following command is using a free API from https://www.cryptocompare.com/ (CC BY-NC 3.0)
     The API request can be found here: https://www.cryptocompare.com/api#-api-data-price-
 
     Usage:

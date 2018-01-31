@@ -1,0 +1,128 @@
+{
+    "trace1": {
+        "type": "line",
+        "line": {
+            "color": "rgb(0, 217, 255)",
+            "width": 3
+        },
+      "fill": "tonexty",
+      "fillcolor": "rgba(0, 231, 255, 0.28)",
+      "marker": {
+        "line": {
+          "width": 0.01
+        }
+      },
+      "x": [],
+      "y": [],
+      "name": "coin"
+    },
+    
+    "lay": {
+        "title": "<b>Title/b>",
+        "titlefont": {
+            "family": "Droid Serif",
+            "size": 18,
+            "color": "rgb(0, 217, 255)"
+        },
+        "height": 540,
+        "width": 960,
+        "autosize": false,
+        "bargap": 0,
+        "boxmode": "group",
+        "paper_bgcolor": "rgba(0, 0, 0, 0)",
+        "margin": {
+            "l": 70,
+            "r": 70,
+            "t": 40,
+            "b": 50,
+            "pad": 0,
+            "autoexpand": true
+        },
+        "plot_bgcolor": "rgba(58, 58, 58, 0)",
+        "scene": {
+            "aspectratio": {
+                "y": 1,
+                "x": 1,
+                "z": 1
+            },
+          "aspectmode": "auto"
+        },
+        "yaxis": {
+            "domain": [
+                0.09,
+                1
+            ],
+           "range": [
+                0,
+                1
+            ],
+            "type": "linear",
+            "showticklabels": true,
+            "gridcolor": "rgb(142, 142, 142)",
+            "linecolor": "rgb(0, 217, 255)",
+            "mirror": true,
+            "nticks": 15,
+            "linewidth": 3,
+            "autorange": false,
+            "tickprefix": "$",
+            "tickmode": "auto",
+            "ticks": "inside",
+            "tickwidth": 6,
+            "ticklen": 14,
+            "zeroline": true,
+            "zerolinewidth": 3,
+            "zerolinecolor": "rgb(0, 217, 255)",
+            "showgrid": true,
+            "rangeslider": {
+                "visible": false,
+                "autorange": true
+            },
+            "showline": true,
+            "tickfont": {
+                "color": "rgb(0, 217, 255)",
+                "family": "Droid Serif",
+                "size": 18
+            },
+          "exponentformat": "B"
+        },
+        "xaxis": {
+            "domain": [
+                0.00,
+                1.01
+            ],
+            "type": "category",
+            "showticklabels": true,
+            "gridcolor": "rgb(142, 142, 142)",
+            "linecolor": "rgb(0, 217, 255)",
+            "mirror": true,
+            "nticks": 23,
+            "linewidth": 3,
+            "autorange": true,
+            "tickprefix": "",
+            "tickmode": "auto",
+            "ticks": "inside",
+            "ticklen": 14,
+            "zeroline": true,
+            "zerolinewidth": 3,
+            "zerolinecolor": "rgb(0, 217, 255)",
+            "showgrid": true,
+            "rangeslider": {
+                "visible": false,
+                "autorange": true
+            },
+            "showline": true,
+            "tickfont": {
+                "color": "rgb(0, 217, 255)",
+                "family": "Droid Serif",
+                "size": 12
+            },
+            "tickwidth": 6,
+            "tickangle": 45,
+            "side": "bottom",
+            "position": 0,
+            "anchor": "y",
+            "exponentformat": "none"
+        },
+        "hovermode": "closest"
+    }
+}
