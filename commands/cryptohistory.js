@@ -1,4 +1,3 @@
-
 /*  cryptohistory.js by David Jerome @GlassToeStudio - GlassToeStudio@gmail.com
 
     16 September, 2017
@@ -67,19 +66,29 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
       historyData = JSON.parse(body)
       let price = historyData.price
       for (let i = 0; i < price.length; i++) {
-        xAxis.push(UnixToDate(historyData.price[i][0]))
+        xAxis.push(UnixToDate(historyData.price[i][0], hist))
         yAxis.push(historyData.price[i][1])
       }
     } catch (error) { return ('<:doggo:328259712963313665>' + ' Not a valid crypto-currency, try BTC, ETH, or LTC.') }
 
+    let yMin = ((Math.min(...yAxis)) * 1.01)
+    let yMax = ((Math.max(...yAxis)) * 1.01)
+    // console.log('Y Min: ' + yMin)
+    // console.log('Y Max: ' + yMax)
+
     // Create the json object for our data and chart-type
     let trace1 = {
-      type: 'scatter',
+      fill: 'tonexty',
+      type: 'line',
+      line: {
+        color: 'rgb(0, 217, 255)'
+      },
       marker: {
         line: {
           width: 0.01
         }
       },
+      fillcolor: 'rgba(0, 231, 255, 0.28)',
       x: xAxis,
       y: yAxis,
       name: coin
@@ -122,14 +131,18 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
           0.09,
           1
         ],
+        range: [
+          yMin,
+          yMax
+        ],
         type: 'linear',
         showticklabels: true,
         gridcolor: 'rgb(142, 142, 142)',
-        linecolor: 'rgb(23, 190, 207)',
+        linecolor: 'rgb(0, 217, 255)',
         mirror: true,
         nticks: 15,
         linewidth: 2,
-        autorange: true,
+        autorange: false,
         tickprefix: '$',
         tickmode: 'auto',
         ticks: 'inside',
@@ -137,11 +150,10 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
         ticklen: 14,
         zeroline: true,
         zerolinewidth: 5,
-        zerolinecolor: 'rgb(23, 190, 207)',
+        zerolinecolor: 'rgb(0, 217, 255)',
         showgrid: true,
         rangeslider: {
-          visible: false,
-          autorange: true
+          visible: false
         },
         showline: true,
         tickfont: {
@@ -160,7 +172,7 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
         type: 'category',
         showticklabels: true,
         gridcolor: 'rgb(142, 142, 142)',
-        linecolor: 'rgb(23, 190, 207)',
+        linecolor: 'rgb(0, 217, 255)',
         mirror: true,
         nticks: 15,
         linewidth: 2,
@@ -171,7 +183,7 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
         ticklen: 14,
         zeroline: true,
         zerolinewidth: 5,
-        zerolinecolor: 'rgb(23, 190, 207)',
+        zerolinecolor: 'rgb(0, 217, 255)',
         showgrid: true,
         rangeslider: {
           visible: false,
@@ -195,7 +207,7 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
 
     // Set our data and graph options
     var data = [trace1]
-    var graphOptions = {layout: lay, fileopt: 'overwrite', filename: 'Crytpo_' + coin + ' ' + hist + ' History'}
+    var graphOptions = {layout: lay, fileopt: 'overwrite', filename: 'Crytpo_History'}
 
     // Create the chart and plot our data (delete the last plot created, with its data)
     plotly.plot(data, graphOptions, function (err, msg) {
@@ -203,24 +215,24 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
         console.log(err)
         return
       }
-      let deleteID = parseInt(msg.url.slice(-3))
-      let deletPlotID = (deleteID - 2).toString()
-      let delegeGridId = (deleteID - 1).toString()
-      console.log(deletPlotID)
-      console.log(delegeGridId)
+      // let deleteID = parseInt(msg.url.slice(-3))
+      // let deletePlotID = (deleteID - 2).toString()
+      // let deleteGridId = (deleteID - 1).toString()
+      // console.log(deletePlotID)
+      // console.log(deleteGridId)
       graphLocation = msg.url + '.png'
 
-      console.log(graphLocation)
+      // console.log(graphLocation)
 
-      plotly.deletePlot(delegeGridId, function (err, plot) {
-        if (err) { // console.log(err)
-        } else { console.log('deleted an old graph') }
-      })
+      // plotly.deletePlot(deleteGridId, function (err, plot) {
+      //   if (err) { // console.log(err)
+      //   } else { console.log('deleted an old graph') }
+      // })
 
-      plotly.deletePlot(deletPlotID, function (err, plot) {
-        if (err) { // console.log(err)
-        } else { console.log('deleted an old graph') }
-      })
+      // plotly.deletePlot(deletePlotID, function (err, plot) {
+      //   if (err) { // console.log(err)
+      //   } else { console.log('deleted an old graph') }
+      // })
 
       message.channel.send({ embed: {
         'title': coin + ' ' + hist + ' Day History',
@@ -244,7 +256,7 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
  * yyyy mm dd hh mm AM/PM
  * @param  {number} unixTimeStamp
  */
-function UnixToDate (timestamp) {
+function UnixToDate (timestamp, hist) {
   let d = new Date(timestamp) // Convert the passed timestamp to milliseconds
   // let yyyy = d.getFullYear()
   let mm = ('0' + (d.getMonth() + 1)).slice(-2)  // Months are zero based. Add leading 0.
@@ -266,6 +278,7 @@ function UnixToDate (timestamp) {
   }
 
   // ie: 2013-02-18, 8:35 AM
-  time = mm + '-' + dd + ', ' + h + ':' + min + ' ' + ampm
+  if (hist !== 1) time = mm + '-' + dd + ', ' + h + ':' + min + ' ' + ampm
+  else time = h + ':' + min + ' ' + ampm
   return time
 }
