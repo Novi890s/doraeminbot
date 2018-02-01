@@ -94,12 +94,12 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
 
       message.channel.send({ embed: {
         'title': coin + ' ' + hist + ' Day History',
-        'color': 9636912,
+        'color': 55807,
         'file': graphLocation
       }})
     })
   })
-}, ['hist', 'history'], 'Show latest trend for the past day.', '<crypto-currency ticker> Example: Bitcoin = BTC')
+}, ['hist', 'history', 'hsit', 'chart'], 'Show time series price data for a given currency.', '<crypto-currency ticker> Example: Bitcoin = BTC')
 
 /**
  * Takes a UNIX time stamp (in milliseconds) and converts to
