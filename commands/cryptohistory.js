@@ -61,7 +61,7 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
     try {
       historyData = JSON.parse(body)
       let price = historyData.price
-      for (let i = 0; i < price.length; i++) {
+      for (let i = 0; i < price.length - 1; i++) { // Last element is the current time.
         xAxis.push(UnixToDate(historyData.price[i][0], hist))
         yAxis.push(historyData.price[i][1])
       }
@@ -109,7 +109,7 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
  */
 function UnixToDate (timestamp, hist) {
   let d = new Date(timestamp) // Convert the passed timestamp to milliseconds
-  // let yyyy = d.getFullYear()
+  let yyyy = d.getFullYear()
   let mm = ('0' + (d.getMonth() + 1)).slice(-2)  // Months are zero based. Add leading 0.
   let dd = ('0' + d.getDate()).slice(-2) // Add leading 0.
   let hh = d.getHours()
@@ -128,7 +128,22 @@ function UnixToDate (timestamp, hist) {
     h = 12
   }
 
-  if (hist !== 1) time = mm + '-' + dd + ', ' + h + ':' + min + ' ' + ampm
+  if (hist !== 1) time = dateDict[mm] + ' - ' + dd + ', ' + h + ':' + min + ' ' + ampm
   else time = h + ':' + min + ' ' + ampm
   return time
+}
+
+const dateDict = {
+  '01': 'Jan',
+  '02': 'Feb',
+  '03': 'Mar',
+  '04': 'Apr',
+  '05': 'May',
+  '06': 'Jun',
+  '07': 'Jul',
+  '08': 'Aug',
+  '09': 'Sep',
+  '10': 'Oct',
+  '11': 'Nov',
+  '12': 'Dec'
 }
