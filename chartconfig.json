@@ -3,18 +3,22 @@
         "type": "line",
         "line": {
             "color": "rgb(0, 217, 255)",
-            "width": 3
+            "width": 3,
+            "shape": "spline",
+            "smoothing": 1,
+            "simplify": true
         },
-      "fill": "tonexty",
-      "fillcolor": "rgba(0, 231, 255, 0.28)",
-      "marker": {
-        "line": {
-          "width": 0.01
-        }
-      },
-      "x": [],
-      "y": [],
-      "name": "coin"
+        "connectgaps": false,
+        "fill": "tonexty",
+        "fillcolor": "rgba(0, 231, 255, 0.28)",
+        "marker": {
+            "line": {
+            "width": 0.01
+            }
+        },
+        "x": [],
+        "y": [],
+        "name": "coin"
     },
     
     "lay": {
@@ -90,12 +94,12 @@
                 0.00,
                 1.01
             ],
-            "type": "category",
+            "type": "date",
             "showticklabels": true,
             "gridcolor": "rgb(142, 142, 142)",
             "linecolor": "rgb(0, 217, 255)",
             "mirror": true,
-            "nticks": 23,
+            "nticks": 25,
             "linewidth": 3,
             "autorange": true,
             "tickprefix": "",
@@ -123,6 +127,21 @@
             "anchor": "y",
             "exponentformat": "none"
         },
-        "hovermode": "closest"
+        "hovermode": "closest",
+        "annotations": [
+            {
+            "xref": "paper",
+            "yref": "paper",
+            "text": "Current: $8,700",
+            "y": 0.95,
+            "x": 0.95,
+            "font": {
+                "color": "rgb(0, 217, 255)",
+                "family": "Droid Serif",
+                "size": 20
+            },
+            "showarrow": false
+            }
+        ]
     }
 }

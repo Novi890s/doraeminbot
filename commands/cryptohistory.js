@@ -19,6 +19,9 @@ const username = process.env.PLOTLY_USER_NAME
 const plotlyapikey = process.env.PLOTLY_API_KEY
 const plotly = require('plotly')(username, plotlyapikey)
 
+var lay
+var trace1
+
 GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
   let histories = [365, 180, 90, 30, 7, 1]
   let xAxis = []
@@ -27,7 +30,8 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
   let msg = (message.content.toUpperCase()).split(' ')
   let coin = msg[0]
   let hist = msg[1]
-
+  lay = {}
+  trace1 = {}
   // console.log('_____________')
   // console.log('Coin : ' + coin)
   // console.log('History : ' + hist)
@@ -61,18 +65,19 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
     try {
       historyData = JSON.parse(body)
       let price = historyData.price
-      for (let i = 0; i < price.length - 1; i++) { // Last element is the current time.
-        xAxis.push(UnixToDate(historyData.price[i][0], hist))
-        yAxis.push(historyData.price[i][1])
+      for (let i = 0; i < price.length - 1; i++) { // Last element is the current time/price.
+        // xAxis.push(UnixToDate(historyData.price[i][0], hist))
+        xAxis.push(historyData.price[i][0]) // time // TODO: format time output in chartconfig.json
+        yAxis.push(historyData.price[i][1]) // price
       }
     } catch (error) { return ('<:doggo:328259712963313665>' + ' Not a valid crypto-currency, try BTC, ETH, or LTC.') }
 
     let yMin = Math.min(...yAxis)
     let yMax = (Math.max(...yAxis) * 1.01)
 
-    let trace1 = GlassBot.chartConfig.trace1
-    let lay = GlassBot.chartConfig.lay
-
+    trace1 = GlassBot.chartConfig.trace1
+    lay = GlassBot.chartConfig.lay
+    changeColor(255, 64, 64)
     trace1.x = xAxis
     trace1.y = yAxis
     trace1.name = coin
@@ -80,11 +85,12 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
     lay.title = '<b>' + coin + ' ' + hist + ' Day History</b>'
     lay.yaxis.range[0] = yMin
     lay.yaxis.range[1] = yMax
+    lay.annotations[0].text = 'Current: $' + historyData.price[historyData.price.length - 1][1]
 
     // Set our data and graph options
     let graphOptions = {layout: lay, fileopt: 'overwrite', filename: 'Crytpo_History'}
 
-    // Create the chart and plot our data (delete the last plot created, with its data)
+    // Create the chart and plot our data
     plotly.plot([trace1], graphOptions, function (err, msg) {
       if (err) {
         console.log(err)
@@ -100,6 +106,34 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
     })
   })
 }, ['hist', 'history', 'hsit', 'chart'], 'Show time series price data for a given currency.', '<crypto-currency ticker> Example: Bitcoin = BTC')
+
+function changeColor (red, green, blue) {
+  // "rgb(0, 217, 255)",
+  red = getRandomInt(0, 255)
+  green = getRandomInt(0, 255)
+  blue = getRandomInt(0, 255)
+
+  let newColor = 'rgb(' + red + ', ' + green + ', ' + blue + ')'
+  trace1.line.color = newColor
+  lay.titlefont.color = newColor
+  lay.yaxis.linecolor = newColor
+  lay.yaxis.zerolinecolor = newColor
+  lay.yaxis.tickfont.color = newColor
+  lay.xaxis.linecolor = newColor
+  lay.xaxis.zerolinecolor = newColor
+  lay.xaxis.tickfont.color = newColor
+  lay.annotations[0].font.color = newColor
+  // "rgba(0, 231, 255, 0.28)",
+  red = getRandomInt(0, 255)
+  green = getRandomInt(0, 255)
+  blue = getRandomInt(0, 255)
+  newColor = 'rgba(' + red + ', ' + green + ', ' + blue + ', 0.28)'
+  trace1.fillcolor = newColor
+}
+
+function getRandomInt (min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
 
 /**
  * Takes a UNIX time stamp (in milliseconds) and converts to
