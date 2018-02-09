@@ -18,9 +18,11 @@ const request = require('request')
 const username = process.env.PLOTLY_USER_NAME
 const plotlyapikey = process.env.PLOTLY_API_KEY
 const plotly = require('plotly')(username, plotlyapikey)
+const currencySymbolMap = require('../map')
 
 var lay
 var trace1
+var trace2
 
 GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
   let histories = [365, 180, 90, 30, 7, 1]
@@ -65,33 +67,43 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
     try {
       historyData = JSON.parse(body)
       let price = historyData.price
-      for (let i = 0; i < price.length - 1; i++) { // Last element is the current time/price.
-        // xAxis.push(UnixToDate(historyData.price[i][0], hist))
-        xAxis.push(historyData.price[i][0]) // time // TODO: format time output in chartconfig.json
+      for (let i = 0; i < price.length; i++) { // Last element is the current time/price.
+        xAxis.push(UnixToDate(historyData.price[i][0], hist))
+        // xAxis.push(historyData.price[i][0]) // time // TODO: format time output in chartconfig.json
         yAxis.push(historyData.price[i][1]) // price
       }
     } catch (error) { return ('<:doggo:328259712963313665>' + ' Not a valid crypto-currency, try BTC, ETH, or LTC.') }
 
     let yMin = Math.min(...yAxis)
-    let yMax = (Math.max(...yAxis) * 1.01)
+    let yMax = Math.max(...yAxis)
+    let current = historyData.price[historyData.price.length - 1][1]
+    let height = ((yMax - yMin) * 0.20) + yMax
 
     trace1 = GlassBot.chartConfig.trace1
+    trace2 = GlassBot.chartConfig.trace2
     lay = GlassBot.chartConfig.lay
-    changeColor(255, 64, 64)
+    // changeColor(255, 64, 64)
+    // xAxis.splice(xAxis.length - 1, 0, null)
+    // yAxis.splice(yAxis.length - 1, 0, yMin)
     trace1.x = xAxis
     trace1.y = yAxis
+    trace2.x = [xAxis[0], xAxis[xAxis.length - 1]]
+    trace2.y = [current, current]
     trace1.name = coin
     // Create the chart layout and axis names
     lay.title = '<b>' + coin + ' ' + hist + ' Day History</b>'
     lay.yaxis.range[0] = yMin
-    lay.yaxis.range[1] = yMax
-    lay.annotations[0].text = 'Current: $' + historyData.price[historyData.price.length - 1][1]
+    lay.yaxis.range[1] = height
+    lay.xaxis.range[1] = xAxis.length - 1
+    lay.annotations[0].text = 'Current: ' + getSymbolFromCurrency('USD') + parseFloat(current).toLocaleString('en-IN', { maximumSignificantDigits: 10, minimumFractionDigits: 2 })
+    lay.annotations[1].text = 'Low: ' + getSymbolFromCurrency('USD') + parseFloat(yMin).toLocaleString('en-IN', { maximumSignificantDigits: 10, minimumFractionDigits: 2 })
+    lay.annotations[2].text = 'High: ' + getSymbolFromCurrency('USD') + parseFloat(yMax).toLocaleString('en-IN', { maximumSignificantDigits: 10, minimumFractionDigits: 2 })
 
     // Set our data and graph options
     let graphOptions = {layout: lay, fileopt: 'overwrite', filename: 'Crytpo_History'}
 
     // Create the chart and plot our data
-    plotly.plot([trace1], graphOptions, function (err, msg) {
+    plotly.plot([trace1, trace2], graphOptions, function (err, msg) {
       if (err) {
         console.log(err)
         return
@@ -106,6 +118,13 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
     })
   })
 }, ['hist', 'history', 'hsit', 'chart'], 'Show time series price data for a given currency.', '<crypto-currency ticker> Example: Bitcoin = BTC')
+
+function getSymbolFromCurrency (currencyCode) {
+  if (typeof currencyCode !== 'string') return undefined
+  var code = currencyCode.toUpperCase()
+  if (!currencySymbolMap.hasOwnProperty(code)) return undefined
+  return currencySymbolMap[code]
+}
 
 function changeColor (red, green, blue) {
   // "rgb(0, 217, 255)",
@@ -122,13 +141,26 @@ function changeColor (red, green, blue) {
   lay.xaxis.linecolor = newColor
   lay.xaxis.zerolinecolor = newColor
   lay.xaxis.tickfont.color = newColor
+  // Min Max and Current values
   lay.annotations[0].font.color = newColor
+  lay.annotations[1].font.color = newColor
+  lay.annotations[2].font.color = newColor
+  // Rectangles
+  newColor = 'rgba(0, 231, 255, 0)'
+  lay.shapes[0].line.color = newColor
+  lay.shapes[1].line.color = newColor
+  lay.shapes[2].line.color = newColor
   // "rgba(0, 231, 255, 0.28)",
   red = getRandomInt(0, 255)
   green = getRandomInt(0, 255)
   blue = getRandomInt(0, 255)
   newColor = 'rgba(' + red + ', ' + green + ', ' + blue + ', 0.28)'
   trace1.fillcolor = newColor
+  // Rectangles
+  newColor = 'rgba(0, 231, 255, 0)'
+  lay.shapes[0].fillcolor = newColor
+  lay.shapes[1].fillcolor = newColor
+  lay.shapes[2].fillcolor = newColor
 }
 
 function getRandomInt (min, max) {

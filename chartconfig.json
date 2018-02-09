@@ -8,6 +8,7 @@
             "smoothing": 1,
             "simplify": true
         },
+        "showlegend": false,
         "connectgaps": false,
         "fill": "tonexty",
         "fillcolor": "rgba(0, 231, 255, 0.28)",
@@ -19,6 +20,25 @@
         "x": [],
         "y": [],
         "name": "coin"
+    },
+    "trace2": {
+        "type": "line",
+        "line": {
+            "color": "rgb(0, 255, 35)",
+            "width": 3
+        },
+        "showlegend": false,
+        "connectgaps": false,
+        "fill": "none",
+        "fillcolor": "rgba(0, 231, 255, 0.28)",
+        "marker": {
+            "line": {
+            "width": 0.01
+            }
+        },
+        "x": [],
+        "y": [],
+        "name": "current"
     },
     
     "lay": {
@@ -94,14 +114,18 @@
                 0.00,
                 1.01
             ],
-            "type": "date",
+            "range": [
+                0,
+                1
+            ],
+            "type": "category",
             "showticklabels": true,
             "gridcolor": "rgb(142, 142, 142)",
             "linecolor": "rgb(0, 217, 255)",
             "mirror": true,
-            "nticks": 25,
+            "nticks": 24,
             "linewidth": 3,
-            "autorange": true,
+            "autorange": false,
             "tickprefix": "",
             "tickmode": "auto",
             "ticks": "inside",
@@ -127,6 +151,9 @@
             "anchor": "y",
             "exponentformat": "none"
         },
+        "legend": {
+            "showlegend": false
+        },
         "hovermode": "closest",
         "annotations": [
             {
@@ -141,6 +168,79 @@
                 "size": 20
             },
             "showarrow": false
+            },
+            {
+            "xref": "paper",
+            "yref": "paper",
+            "text": "Min: $8,700",
+            "y": 0.95,
+            "x": 0.05,
+            "font": {
+                "color": "rgb(0, 217, 255)",
+                "family": "Droid Serif",
+                "size": 20
+            },
+            "showarrow": false
+            },
+            {
+            "xref": "paper",
+            "yref": "paper",
+            "text": "Max: $8,700",
+            "y": 0.95,
+            "x": 0.50,
+            "font": {
+                "color": "rgb(0, 217, 255)",
+                "family": "Droid Serif",
+                "size": 20
+            },
+            "showarrow": false
+            }
+        ],
+        "shapes": [
+            {
+            "opacity": 1,
+            "xref": "paper",
+            "yref": "paper",
+            "fillcolor": "rgba(0, 231, 255, 0.0)",
+            "y1": 0.975,
+            "y0": 0.86,
+            "x0": 0.725,
+            "x1": 0.975,
+            "type": "rectangle",
+            "line": {
+                "color": "rgba(0, 217, 255, 0)",
+                "width": 3
+            }
+            },
+            {
+            "opacity": 1,
+            "xref": "paper",
+            "yref": "paper",
+            "fillcolor": "rgba(0, 231, 255, 0.0)",
+            "y1": 0.975,
+            "y0": 0.86,
+            "x0": 0.025,
+            "x1": 0.275,
+            "type": "rectangle",
+            "line": {
+                "color": "rgba(0, 217, 255, 0)",
+                "width": 3
+            }
+            },
+            {
+            "opacity": 1,
+            "xref": "paper",
+            "yref": "paper",
+            "fillcolor": "rgba(0, 231, 255, 0.0)",
+            "y1": 0.975,
+            "y0": 0.86,
+            "x0": 0.375,
+            "x1": 0.625,
+            "type": "rectangle",
+            "line": {
+                "color": "rgba(0, 217, 255, 0)",
+                "width": 3
+            }
             }
         ]
     }
