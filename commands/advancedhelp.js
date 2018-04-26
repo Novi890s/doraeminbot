@@ -1,9 +1,11 @@
-const GlassBot = require('../bot.js')
+const Glassbot = require('../bot.js')
 const config = require('../config.json')
 
-GlassBot.registerCommand('advancedhelp', 'default', (message, bot) => {
-  let helpMsg = ''
-  let commands = GlassBot.commands
+Glassbot.registerCommand('advancedhelp', 'default', (message, bot) => {
+  let helpMsg = '**Advanced Help**\n\n' +
+  'All commands are prefixed with: `' + config.prefix + '`\n\n'
+
+  let commands = Glassbot.commands
 
   for (let loopCmdType in commands) {
     helpMsg += '**~~------~~** __' + loopCmdType.toUpperCase() + ' COMMANDS__ **~~------~~**'
@@ -29,11 +31,13 @@ GlassBot.registerCommand('advancedhelp', 'default', (message, bot) => {
       }
 
       helpMsg += '\n```'
+      if (helpMsg.length >= 1900) {
+        message.author.send(helpMsg)
+        helpMsg = ''
+      }
     }
   }
 
-  message.author.send('**Advanced Help**\n\n' +
-  'All commands are prefixed with: `' + config.prefix + '` and suffixed with: `' + config.suffix + '`\n\n' +
-  helpMsg, { split: true })
+  message.author.send(helpMsg, { split: true })
   return 'I sent you the advanced help list as a DM!'
 }, [], 'List advanced information about every registered command', '[]')
