@@ -4,19 +4,20 @@ const config = GlassBot.config
 const commands = GlassBot.commands
 
 bot.on('message', (message) => {
-  let cmd
-  let cmdType
+  let cmd = null
+  let cmdType = null
   if (message.author.id === config.botID) {
   //  This is the bot speaking
   } else if (message.author.bot) {
   //  This is the bot speaking
+  } else if (message.content.indexOf(config.prefix, 0) !== 0) {
+  // This is not a command (no prefix)
   } else {
-    message.content = message.content.toLowerCase()
+    let userCommand = message.content.split(' ')[0].replace('!', '').toLowerCase()
     for (let loopCmdType in commands) {
       for (let loopCmd in commands[loopCmdType]) {
-        if (message.content.lastIndexOf(config.prefix + loopCmd, 0) === 0 || message.content.lastIndexOf(loopCmd + config.suffix, 0) === 0) {
-          message.content = message.content.replace(config.prefix + loopCmd, '')
-          message.content = message.content.replace(loopCmd + config.suffix, '')
+        if (userCommand.valueOf() === (loopCmd).valueOf()) {
+          message.content = message.content.replace(config.prefix + userCommand, '')
           cmd = loopCmd
           cmdType = loopCmdType
           break
@@ -24,9 +25,8 @@ bot.on('message', (message) => {
           let aliases = commands[loopCmdType][loopCmd].aliases
           for (let i = 0; i < aliases.length; i++) {
             let alias = aliases[i]
-            if (message.content.lastIndexOf(config.prefix + alias, 0) === 0 || message.content.lastIndexOf(alias + config.suffix, 0) === 0) {
-              message.content = message.content.replace(config.prefix + alias, '')
-              message.content = message.content.replace(alias + config.suffix, '')
+            if (userCommand.valueOf() === alias.valueOf()) {
+              message.content = message.content.replace(config.prefix + userCommand, '')
               cmd = loopCmd
               cmdType = loopCmdType
               break
@@ -66,7 +66,7 @@ bot.on('message', (message) => {
       try {
         var result = commands[cmdType][cmd].process(message, bot)
       } catch (error) {
-        console.log('An Error occured, but so what ;) : ' + error.stack)
+        console.log('An Error occured: ' + error.stack)
       }
       if (result) {
         if (cmdType === 'dm') {
