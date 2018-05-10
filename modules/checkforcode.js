@@ -113,11 +113,12 @@ function ParseMessage (message) {
   InitVariables()
   let lines = message.content.split('\n')
   for (let i = 0; i < lines.length; i++) {
+    let line = lines[i].replace('`', '').trim()
     if (lines[i].search(formatBlock) >= 0) {
       isFormatted = true
       return
     } else {
-      FindCodeElements(i, lines[i], lines)
+      FindCodeElements(i, line, lines)
     }
   }
   CheckMessage(lines, message)
@@ -200,7 +201,7 @@ function PostNewMessage (message, newMessage) {
 function DeleteOldMessage (message) {
   let managePerms = message.guild.member(bot.user).hasPermission('MANAGE_MESSAGES')
   if (managePerms) {
-    message.delete()
+    // message.delete()
   } else {
     message.channel.send('**`Tell the server\'s owner to grant me permission to delete your old message, thank\'s`** :wink:')
   }
@@ -226,7 +227,7 @@ function FormatFirstLine (firstLine) {
  * @param  {string} lastLine
  */
 function FormatLastLine (lastLine) {
-  return lastLine + '\n' + formatBlock
+  return lastLine.replace('`', '') + '\n' + formatBlock
 }
 
 /**
