@@ -61,7 +61,7 @@ GlassBot.registerCommand('cryptohistory', 'default', (message, bot) => {
     }
   }
 
-  let address = 'http://www.coincap.io/history/' + hist + 'day/' + coin
+  let address = 'http://coincap.io/history/' + hist + 'day/' + coin
   request(address, function (error, response, body) {
     if (error) { return ('Something went wrong ¯\\_(ツ)_/¯ ') }
     try {
