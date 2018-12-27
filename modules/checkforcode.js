@@ -1,6 +1,6 @@
 /*  checkforcode.js by David Jerome @GlassToeStudio - GlassToeStudio@gmail.com
 
-    20 July, 2017
+    26 May, 2018
     https://github.com/GlassToeStudio
     http://glasstoestudio.weebly.com/
     https://twitter.com/GlassToeStudio
@@ -14,7 +14,7 @@
         * code elements and keep track of which line are code
         * and which are plain text.
         * The bot will do his best to only format a true code
-        * block, leaving the plain text alone. One complete
+        * block, leaving the plain text alone. Once complete
         * the bot will add code block formatting around the
         * code block, with the current code Lang 'csharp'.
         * The message will be posted anew as formatted code
@@ -38,7 +38,6 @@
 
     This is not code so it is not in the code block.
 
-    ```csharp
     [System.Serializable]
     using UnityEngine;
 
@@ -49,7 +48,7 @@
     {
         /// <summary>   Summary of myFloat. </summary>
         public float myFloat;
-        /// <summary>   Summary of myOtherFloat.</summary>
+        /// <summary>   Summary of myOtherFloat. </summary>
         public float myOtherFLoat;
 
         // Default constructor
@@ -59,7 +58,6 @@
             this.myOtherFLoat = _myOtherFLoat;
         }
     }
-    ```
 
     This is not code so it is not in the code block.
 
@@ -69,34 +67,46 @@
     https://support.discordapp.com/hc/en-us/articles/210298617-Markdown-Text-101-Chat-Formatting-Bold-Italic-Underline-?page=4
 */
 
-const GlassBot = require('../bot.js')
-const bot = GlassBot.bot
-const config = GlassBot.config
+const Confax = require('../bot.js')
+const bot = Confax.bot
+const config = Confax.config
 
-// Salt to taste
+// Salt to taste (config.json)
 const codeElements = config.codeElements
 const codeLang = config.codeLang
 const repostThreshold = config.repostThreshold
 const selfDestructIn = config.selfDestructIn
 const formatBlock = config.formatBlock
+const autoPost = config.autoPost
+var emojiName = config.emojiName
+const backupEmojiName = config.backupEmojiName
+const timeToReact = 60000 // could be in config
+
+// Messages
+const hereIsYourCode = ' **Here is your formatted code, I hope I did this right.** '
+const helpChannelname = 'programming_help'
+const yourUnformattedCode = '`Your unformatted code has been formatted and moved to` '
 
 // Variables
 var isFormatted = false
 var totalLinesOfCode = 0
 var hasFirstLine = false
 var lastLine = 0
+var firstReply
+var reactEmoji
+
 
 // Lets begin
 bot.on('message', message => {
-  if (message.content.length > 1950) return
+  if (message.content.length > 1950) return // This message may be too long to post, once formatted.
   if (message.author.bot) {
     // Self-destruct message
     if (message.content.includes('Your unformatted code')) {
       let usr = message.mentions.users.array()[0]
-      let chnl = (message.guild.channels.find('name', 'programing_help') != null)
-                ? message.guild.channels.find('name', 'programing_help')
-                : message.channel
-      callNTimes(selfDestructIn, 1000, EditBotMessage, message, chnl, usr)
+      let chnl = (message.guild.channels.find('name', helpChannelname) != null)
+        ? message.guild.channels.find('name', helpChannelname)
+        : message.channel
+      CallNTimes(selfDestructIn, 1000, EditBotMessage, message, chnl, usr)
     }
     return
   }
@@ -109,7 +119,7 @@ bot.on('message', message => {
  * return, else keep checking.
  * @param  {string[]} message
  */
-function ParseMessage (message) {
+function ParseMessage(message) {
   InitVariables()
   let lines = message.content.split('\n')
   for (let i = 0; i < lines.length; i++) {
@@ -127,14 +137,40 @@ function ParseMessage (message) {
 }
 
 /**
- * Check if this is unformatted code, if so Create New Message
+ * Check if this is unformatted code, if so listen for emoji reactions or auto post new message.
  * @param  {string[]} lines
  * @param  {string} message
  */
-function CheckMessage (lines, message) {
+function CheckMessage(lines, message) {
   if (IsBadCode() && !isFormatted) {
     lines[lastLine] = FormatLastLine(lines[lastLine])
-    CreateNewMessage(lines, message)
+    if (!autoPost) { // Either listen for a react or just post the new message
+      reactEmoji = message.guild.emojis.find(emoji => emoji.name === emojiName)
+      try {
+        message.react(reactEmoji)
+      } catch (error) {
+        reactEmoji = backupEmojiName
+        emojiName = reactEmoji
+        message.react(reactEmoji)
+      }
+      message.reply(' ⬆ *If this is a block of code, please click the emoji on the message to auto format it, thanks.*')
+        .then(msg => {
+          firstReply = msg
+          msg.delete(timeToReact)
+            .catch(() => {
+              console.log("Message is already deleted")
+            })
+        })
+        .then(() => {
+          ListenForReacts(lines, message)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+    else {
+      CreateNewMessage(lines, message)
+    }
   }
 }
 
@@ -144,7 +180,7 @@ function CheckMessage (lines, message) {
  * @param  {string} line
  * @param  {string[]} lines
  */
-function FindCodeElements (index, line, lines) {
+function FindCodeElements(index, line, lines) {
   let lineLength = line.length - 1
   for (let i = 0; i < codeElements.length; i++) {
     if (line.charAt(lineLength).valueOf() === codeElements[i].valueOf() || line.includes('public') || line.includes('class')) {
@@ -161,11 +197,36 @@ function FindCodeElements (index, line, lines) {
 }
 
 /**
- * Recreate the new message with code formatting included
+ * Listen for a 'FormatMe' reaction. If so, Create new message.
  * @param  {string[]} lines
  * @param  {string[]} message
  */
-function CreateNewMessage (lines, message) {
+function ListenForReacts(lines, message) {
+  const filter = (reaction, user) => {
+    return [emojiName].includes(reaction.emoji.name) && reaction.count > 1;
+  }
+  message.awaitReactions(filter, { max: 1, time: timeToReact, errors: ['time'] })
+    .then(collected => {
+      const reaction = collected.first()
+      if (reaction.emoji.name === emojiName) {
+        firstReply.delete()
+          .catch(() => {
+            console.log("Message is already deleted")
+          })
+        CreateNewMessage(lines, message)
+      }
+    })
+    .catch(() => {
+      message.clearReactions()
+    })
+}
+
+/**
+ * Recreate the new message with code formatting included, then post it.
+ * @param  {string[]} lines
+ * @param  {string[]} message
+ */
+function CreateNewMessage(lines, message) {
   let newMessage = ''
   for (let j = 0; j < lines.length; j++) {
     newMessage += lines[j] + '\n'
@@ -178,19 +239,18 @@ function CreateNewMessage (lines, message) {
  * @param  {string[]} message
  * @param  {string} newMessage
  */
-function PostNewMessage (message, newMessage) {
-  let channel = message.guild.channels.find('name', 'programing_help')
+function PostNewMessage(message, newMessage) {
+  let channel = message.guild.channels.find('name', helpChannelname)
   let isHelp = message.channel.name.indexOf('help') > 0
-    // Move to new channel
+  // Move to new channel
   if (channel != null && channel !== message.channel && !isHelp) {
-    // TODO: Would like to add some color to this message
-    message.reply(':nerd: __`Your unformatted code has been formatted and moved to`__ ' + channel + '. :nerd:' +
-                  '\n\t*This message will self-destruct in ' + selfDestructIn + ' seconds*')
-    channel.send(message.author + ', **★★ I have formatted your code and placed it here. Good Luck! ★★** ')
+    message.reply(yourUnformattedCode + channel + '.' +
+      '\n\tThis message will self-destruct in *' + selfDestructIn + '* seconds')
+    channel.send(message.author + hereIsYourCode)
     channel.send(newMessage)
-    // post is same channel
+    // post in same channel
   } else {
-    message.channel.send(message.author + ' **★★ I see you forgot to format your code... Let me help you. ★★** ')
+    message.channel.send(message.author + hereIsYourCode)
     message.channel.send(newMessage)
   }
   DeleteOldMessage(message)
@@ -200,7 +260,7 @@ function PostNewMessage (message, newMessage) {
  * Deletes the old unformatted message if bot has permission
  * @param  {string} message
  */
-function DeleteOldMessage (message) {
+function DeleteOldMessage(message) {
   let managePerms = message.guild.member(bot.user).hasPermission('MANAGE_MESSAGES')
   if (managePerms) {
     message.delete()
@@ -213,8 +273,8 @@ function DeleteOldMessage (message) {
  *  Adds code formatting block start to the first line of code
  * @param  {string} firstLine
  */
-function FormatFirstLine (firstLine) {
-  /*
+function FormatFirstLine(firstLine) {
+  /* TODO:
   What if the first line of code has some regular text at the beginning?
       "Here is my code: public int myInt = 0;"
       "Here is my code" will also be formatted.
@@ -228,37 +288,39 @@ function FormatFirstLine (firstLine) {
  * Add formatting code bock end to the last line of code
  * @param  {string} lastLine
  */
-function FormatLastLine (lastLine) {
+function FormatLastLine(lastLine) {
   return lastLine.replace(/`/g, '') + '\n' + formatBlock
 }
 
 /**
  * If total line of code is greater than repostThreshold return true
  */
-function IsBadCode () {
+function IsBadCode() {
   return (totalLinesOfCode >= repostThreshold)
 }
 
 /**
  * Initialize variables
  */
-function InitVariables () {
+function InitVariables() {
   isFormatted = false
   hasFirstLine = false
   lastLine = 0
   totalLinesOfCode = 0
+  firstReply = undefined
+  reactEmoji = ''
 }
 
 /**
- * Edits the instruction message once a second, decrementing the time variable by 1
+ * Edits the instruction message once per second, decrementing the time variable by 1
  * @param  {string} usr
  * @param  {string[]} message
  * @param  {string} channel
  * @param  {number} t
  */
-function EditBotMessage (usr, message, channel, t) {
-  message.edit(usr + ', :nerd: __`Your unformatted code has been formatted and moved to`__ ' + channel + '. :nerd:' +
-               '\n\t*This message will self-destruct in ' + t + ' seconds*')
+function EditBotMessage(usr, message, channel, t) {
+  message.edit(usr + ', ' + yourUnformattedCode + channel + '.' +
+    '\n\tThis message will self-destruct in *' + t + '* seconds')
 }
 
 /**
@@ -270,13 +332,13 @@ function EditBotMessage (usr, message, channel, t) {
  * @param  {string} chnl
  * @param  {string} usr
  */
-function callNTimes (n, time, fn, msg, chnl, usr) {
-  function callFn () {
+function CallNTimes(n, time, fn, msg, chnl, usr) {
+  function callFn() {
     if (--n < 1) {
       usr = null
       msg.delete()
-          .then(m => console.log(`Deleted message from ${m.author}`))
-          .catch(console.error)
+        .then(m => console.log(`Deleted message from ${m.author.name}`))
+        .catch(console.error)
       return
     }
     fn(usr, msg, chnl, n)

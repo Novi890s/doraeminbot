@@ -7,6 +7,9 @@
   "repostThreshold": 4,
   "codeLang": "csharp",
   "selfDestructIn": 5,
-  "formatBlock": "```"
+  "formatBlock": "```",
+  "autoPost": false,
+  "emojiName": "FormatMe",
+  "backupEmojiName": "💻"
 }
 
