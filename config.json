@@ -2,7 +2,7 @@
   "prefix": "d!",
   "suffix": "d!",
   "masters": ["202515321402294275", "206092093653909504"],
-  "botID": "NTY5NDMyNDA0MzYwNTYwNjQw.XOEIhA.TBsz7Y7rf3I12lZ5CrKKfpR6h6I",
+  "botID": "569432404360560640",
   "codeElements": [";", "{", "}", ")", "[", "]", ">"],
   "repostThreshold": 4,
   "codeLang": "csharp",
