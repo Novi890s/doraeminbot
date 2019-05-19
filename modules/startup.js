@@ -4,7 +4,7 @@ const bot = Confax.bot
 const config = Confax.config
 
 bot.on('ready', () => {
-  bot.user.setActivity('Ayudando a Nobita Nobi a aprovar.', {type: "PLAYING"})
+  bot.user.setActivity('Ayudando a Nobita Nobi a aprobar mates.', {type: "PLAYING"})
   bot.user.setStatus('online')
   console.log('Confax is ready to rumble!')
 })
