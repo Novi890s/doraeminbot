@@ -43,7 +43,7 @@ module.exports = class NewPasswordCommand extends Command {
 	}
 
 	async run(msg, { weak, strong }) {
-		const base = await loadImage(path.join(__dirname, '..', '..', 'assets', 'images', 'new-password.png'));
+		const base = await loadImage(path.join(__dirname, '..', '..', 'images', 'new-password.png'));
 		const canvas = createCanvas(base.width, base.height);
 		const ctx = canvas.getContext('2d');
 		ctx.drawImage(base, 0, 0);
