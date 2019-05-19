@@ -1,8 +1,8 @@
 {
-  "prefix": "!",
-  "suffix": "!",
+  "prefix": "d!",
+  "suffix": "d!",
   "masters": ["202515321402294275", "206092093653909504"],
-  "botID": "319545839951544320",
+  "botID": "569432404360560640",
   "codeElements": [";", "{", "}", ")", "[", "]", ">"],
   "repostThreshold": 4,
   "codeLang": "csharp",
